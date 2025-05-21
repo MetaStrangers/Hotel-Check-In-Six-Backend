@@ -149,7 +149,7 @@ export class VeriffSessionsController {
     const documentBackSideImagePayload: VeriffSessionDocument = {} as any;
 
     if (document_front_side_image) {
-      documentFrontSideImagePayload.media_name = `${Date.now()}-${document_front_side_image?.filename}`;
+      documentFrontSideImagePayload.media_name = `${Date.now()}-${document_front_side_image?.originalname}`;
       documentFrontSideImagePayload.type = `front-side`;
       documentFrontSideImagePayload.media_type = 'image';
       documentFrontSideImagePayload.media_url =
@@ -157,8 +157,8 @@ export class VeriffSessionsController {
     }
 
     if (document_back_side_image) {
-      documentBackSideImagePayload.media_name = `${Date.now()}-${document_back_side_image?.filename}`;
-      documentBackSideImagePayload.type = `front-side`;
+      documentBackSideImagePayload.media_name = `${Date.now()}-${document_back_side_image?.originalname}`;
+      documentBackSideImagePayload.type = `back-side`;
       documentBackSideImagePayload.media_type = 'image';
       documentBackSideImagePayload.media_url =
         await this.cloudinaryService.uploadImage(document_back_side_image);

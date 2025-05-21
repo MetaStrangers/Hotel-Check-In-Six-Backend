@@ -20,13 +20,14 @@ export class PutVeriffSessionBodyDto {
 
   @Expose()
   @IsNotEmpty()
+  @Transform(({ value }: { value: string }) => parseInt(value, 10))
   @IsEnum(VeriffSessionUserDocumentIdTypes)
   document_id_type: VeriffSessionUserDocumentIdTypes;
 
   @Expose()
   @IsNotEmpty()
+  @Transform(({ value }) => (value ? lodash?.pickBy(JSON.parse(value), lodash?.identity) : value))
   @IsObject()
-  @Transform(({ value }) => (value ? lodash?.pickBy(value, lodash?.identity) : value))
   extracted_data: {
     [key: string]: any;
   };
