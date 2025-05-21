@@ -31,12 +31,14 @@ export class PostCompanyBodyDto {
 export class FindCompaniesQueryDto {
   @Expose()
   @IsNotEmpty()
+  @Transform(({ value }: { value: string }) => parseInt(value, 10))
   @IsInt()
   @Min(1)
   public readonly page: number;
 
   @Expose()
   @IsNotEmpty()
+  @Transform(({ value }: { value: string }) => parseInt(value, 10))
   @IsInt()
   @Min(1)
   public readonly per_page: number;

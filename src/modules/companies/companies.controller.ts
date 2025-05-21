@@ -51,6 +51,8 @@ export class CompaniesController {
 
     company = await this.companyService.save(bd);
 
+    delete company?.password;
+
     return {
       result: company,
     };
