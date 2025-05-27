@@ -23,7 +23,7 @@ export class VeriffSession {
   })
   status: VeriffSessionStatus;
 
-  @OneToOne(() => VeriffSessionData)
+  @OneToOne(() => VeriffSessionData, (v) => v?.session)
   @JoinColumn({ name: 'session_data_id' })
   session_data?: VeriffSessionData;
 

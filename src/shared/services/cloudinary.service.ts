@@ -17,14 +17,32 @@ export class CloudinaryService {
 
   async uploadImage(file: Express.Multer.File): Promise<string> {
     try {
-      const result = await cloudinary.uploader.upload(file?.path, {
+      if (file.buffer) {
+        return await new Promise<string>((resolve, reject) => {
+          const uploadStream = cloudinary.uploader.upload_stream(
+            { folder: this.folderName },
+            (error, result) => {
+              if (error) {
+                this.logger.error(`Error uploading to Cloudinary: ${error.message}`);
+                return reject(error);
+              }
+              return resolve(result.secure_url);
+            },
+          );
+          uploadStream.end(file.buffer);
+        });
+      }
+
+      // Fallback: if using diskStorage
+      const result = await cloudinary.uploader.upload(file.path, {
         folder: this.folderName,
       });
-      const imageUrl = result?.secure_url;
-      fs.unlinkSync(file.path); // Remove local file after upload
-      return imageUrl;
+
+      fs.unlinkSync(file.path); // clean up
+      return result.secure_url;
     } catch (e) {
       this.logger.error(`Error uploading to Cloudinary: ${e?.message}`);
+      throw e;
     }
   }
 }

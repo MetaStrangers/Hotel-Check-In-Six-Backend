@@ -1,7 +1,5 @@
-import { Exclude, Expose, Transform } from 'class-transformer';
-import { IsEnum, IsNotEmpty, IsObject, IsUUID } from 'class-validator';
-import { VeriffSessionUserDocumentIdTypes } from 'src/shared/enum';
-import * as lodash from 'lodash';
+import { Exclude, Expose } from 'class-transformer';
+import { IsNotEmpty, IsUUID } from 'class-validator';
 
 @Exclude()
 export class FindOneVeriffSessionDto {
@@ -17,18 +15,4 @@ export class PutVeriffSessionBodyDto {
   @IsNotEmpty()
   @IsUUID()
   id: string;
-
-  @Expose()
-  @IsNotEmpty()
-  @Transform(({ value }: { value: string }) => parseInt(value, 10))
-  @IsEnum(VeriffSessionUserDocumentIdTypes)
-  document_id_type: VeriffSessionUserDocumentIdTypes;
-
-  @Expose()
-  @IsNotEmpty()
-  @Transform(({ value }) => (value ? lodash?.pickBy(JSON.parse(value), lodash?.identity) : value))
-  @IsObject()
-  extracted_data: {
-    [key: string]: any;
-  };
 }

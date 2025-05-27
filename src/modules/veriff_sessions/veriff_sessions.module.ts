@@ -7,6 +7,7 @@ import { MulterModule } from '@nestjs/platform-express';
 import * as os from 'os';
 import { CloudinaryService } from 'src/shared/services';
 import { VeriffSessionDataService } from 'src/shared/services/entities';
+import { DocumentExtractionService } from 'src/shared/services/document-extraction.service';
 
 @Module({
   imports: [
@@ -18,7 +19,12 @@ import { VeriffSessionDataService } from 'src/shared/services/entities';
     }),
   ],
   controllers: [VeriffSessionsController],
-  providers: [VeriffSessionsService, CloudinaryService, VeriffSessionDataService],
+  providers: [
+    VeriffSessionsService,
+    CloudinaryService,
+    VeriffSessionDataService,
+    DocumentExtractionService,
+  ],
   exports: [VeriffSessionsService],
 })
 export class VeriffSessionsModule {}
