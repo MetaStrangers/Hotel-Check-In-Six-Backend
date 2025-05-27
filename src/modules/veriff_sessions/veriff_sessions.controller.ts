@@ -121,8 +121,9 @@ export class VeriffSessionsController {
   ) {
     const document_front_side_image = files?.document_front_side_image?.[0];
     const document_back_side_image = files?.document_back_side_image?.[0];
+    const { id, ...extracted_data } = bd;
 
-    let extracted_data: {
+    /* let extracted_data: {
       id_type: string | null;
       id_number: string | null;
       date_of_birth: string | null;
@@ -131,11 +132,11 @@ export class VeriffSessionsController {
       document_country: string | null;
       issued_date: string | null;
       expiry_date: string | null;
-    } = {} as any;
+    } = {} as any; */
 
     const veriffSession = await this.veriffSessionService.findOne({
       where: {
-        id: bd?.id,
+        id: id,
       },
       relations: { session_data: true, company: true },
     });
@@ -161,11 +162,25 @@ export class VeriffSessionsController {
       throw new BadRequestException('document_front_side_image is required');
     }
 
+    const documentAlreadyExist = await this.veriffSessionDataService.findOne({
+      select: ['id'],
+      where: {
+        id_type: extracted_data?.id_type,
+        id_number: extracted_data?.id_number,
+        document_country: extracted_data?.document_country,
+        session: { company: { id: veriffSession?.company?.id } },
+      },
+    });
+
+    if (documentAlreadyExist) {
+      throw new HttpException(`Duplicate Verification with same document!`, HttpStatus.BAD_REQUEST);
+    }
+
     const documentFrontSideImagePayload: VeriffSessionDocument = {} as any;
     const documentBackSideImagePayload: VeriffSessionDocument = {} as any;
 
     if (document_front_side_image) {
-      try {
+      /*  try {
         extracted_data = await this.documentExtractionService.extractDataFromDocument(
           document_front_side_image?.buffer,
           document_front_side_image?.mimetype,
@@ -198,7 +213,7 @@ export class VeriffSessionsController {
           : `Try Again, Failed to Process Your Documents!`;
 
         throw new HttpException(errMessage, HttpStatus.BAD_REQUEST);
-      }
+      } */
 
       documentFrontSideImagePayload.media_name = `${Date.now()}-${document_front_side_image?.originalname}`;
       documentFrontSideImagePayload.type = `front-side`;
